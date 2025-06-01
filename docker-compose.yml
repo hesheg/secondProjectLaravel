@@ -1,0 +1,30 @@
+services:
+
+  web:
+    image: nginx
+    restart: always
+    ports:
+      - 8181:80
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - .:/var/www/html
+    depends_on:
+      - php-fpm
+      - db
+
+  php-fpm:
+    build: .
+    restart: always
+    volumes:
+      - .:/var/www/html
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-xdebug.ini
+
+  db:
+    image: postgres:14.1
+    restart: always
+    ports:
+      - 54323:5432
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
