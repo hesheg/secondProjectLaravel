@@ -12,4 +12,10 @@ class Product extends Model
         'price',
         'image_url'
     ];
+
+    public function order()
+    {
+        return $this->belongsToMany(Order::class, 'order_products')
+            ->withPivot('amount');
+    }
 }

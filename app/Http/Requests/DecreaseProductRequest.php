@@ -11,7 +11,7 @@ class DecreaseProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,22 @@ class DecreaseProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'product_id' => 'required|integer|min:1|exists:products,id',
+            'amount' => 'required|integer|min:1|'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'product_id.required' => 'id продукта должен быть указан',
+            'product_id.integer' => 'id продукта обязательно должно быть целым числом',
+            'product_id.min' => 'такого id нет',
+            'product_id.exists' => 'продукт не найден в таблице продуктов',
+
+            'amount.required' => 'укажите количество добавляемого товара',
+            'amount.integer' => 'число должно быть целым',
+            'amount.min' => 'нельзя добавить число меньше 0',
         ];
     }
 }

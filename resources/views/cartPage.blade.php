@@ -5,7 +5,7 @@
         </div>
         <div class="price">
             <p class="price-title">
-                Итоговая стоимость:
+                Итоговая стоимость: {{ $sum }}
             </p>
             <p class="price-amount">
             </p>
@@ -24,19 +24,24 @@
                     <?php //$res = $userProduct->getProduct(); ?><!----><!---->
 
                 <form class="plus" onsubmit="return false" method="POST">
+                    @csrf
                     <div class="container">
-                        <input type="hidden" placeholder="Enter product_id" name="product_id" value="<?php //echo $res->getId(); ?><!----><!---->" id="product_id" required>
+                        <input type="hidden" name="product_id" value="{{ $product->id }}" id="product_id" required>
+                        <input type="hidden" name="amount" value="1" id="amount" required>
                         <button type="submit" class="registerbtn">+</button>
                     </div>
                     <div>
-                        <input type="hidden" placeholder="Enter amount" name="amount" value="1" id="amount" required>
+
                     </div>
                 </form>
-                    <?php //echo 'Количество: ' . $userProduct->getAmount(); ?><!----><!---->
+
+                <p>{{ $product->pivot->amount }}шт</p>
+
                 <form class="minus" onsubmit="return false" method="POST">
+                    @csrf
                     <div class="container">
-                        <input type="hidden" placeholder="Enter product_id" name="product_id" value="<?php //echo $res->getId(); ?><!----><!---->" id="product_id" required>
-                        <input type="hidden" placeholder="Enter amount" name="amount" value="1" id="amount" required>
+                        <input type="hidden" name="product_id" value="{{ $product->id }}" id="product_id" required>
+                        <input type="hidden" name="amount" value="1" id="amount" required>
                         <button type="submit" class="registerbtn">-</button>
                     </div>
                 </form>
@@ -44,9 +49,9 @@
         </div>
         @endforeach
     </div>
-    <?php //if ($sum > 0): ?><!----><!---->
+    @if($sum > 0)
     <button class="button button-pay"><a href="/create-order">Оформить заказ</a></button>
-    <?php //endif; ?>
+    @endif
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>

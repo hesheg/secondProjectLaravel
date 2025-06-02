@@ -22,14 +22,14 @@
                                 <input type="submit" value="О продукте" class="registerbtn">
                             </form>
 
-                            <form class="plus" method="POST" onsubmit="return false">
+                            <form class="plus" onsubmit="return false" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="hidden" name="amount" value="1">
                                 <button type="submit" class="registerbtn">+</button>
                             </form>
 
-                            <form class="minus" method="POST" onsubmit="return false">
+                            <form class="minus" onsubmit="return false" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="hidden" name="amount" value="1">

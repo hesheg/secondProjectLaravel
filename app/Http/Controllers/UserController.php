@@ -40,8 +40,6 @@ class UserController
         if (Auth::attempt($data)) {
             $request->session()->regenerate();
 
-//            dd(Auth::check(), auth()->user());
-
             return redirect()->route('profile');
         }
 
@@ -52,21 +50,27 @@ class UserController
 
     public function getProfile()
     {
-        if ($user = Auth::user()) {
-            return view('profilePage', ['user' => $user]);
-        } else {
-            return redirect('/login');
-        }
+        $user = Auth::user();
+
+        return view('profilePage', ['user' => $user]);
     }
 
     public function getEditProfileForm()
     {
         $user = Auth::user();
-        return view('editProfileForm', compact('user'));
+        return view('editProfileForm', ['user' => $user]);
     }
 
     public function editProfile(EditProfileRequest $request)
     {
+        $user = Auth::user();
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+
+
+        $user->save();
+        return redirect()->route('profile');
     }
 
     public function logout(Request $request)

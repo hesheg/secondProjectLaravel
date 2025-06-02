@@ -36,9 +36,9 @@ class RegistrateRequest extends FormRequest
           'name.max' => 'Максимальное количество символов 255',
           'name.regex' => 'Имя не должно содержать численные значения',
 
-          'email.required' => 'Имя не должно содержать численные значения',
+          'email.required' => 'Email должен быть указан',
           'email.email' => 'Невалидный email',
-          'email.unique' => 'email уже занят',
+          'email.unique' => 'Email уже занят',
 
           'password.required' => 'Введите пароль',
           'password.min' => 'Пароль должен состоять не меньше 6 символов',
