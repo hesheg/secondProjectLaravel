@@ -22,28 +22,25 @@ class OrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:2|max:255|regex:/^[a-zA-Zа-яА-ЯёЁ]+$/u',
-            'phone' => 'required|numeric|min:9|max:255',
+            'contact_name' => 'required|min:2|max:255|regex:/^[a-zA-Zа-яА-ЯёЁ\s\-]+$/u',
+            'contact_phone' => 'required|digits_between:9,30',
             'comment' => 'nullable|max:255',
-            'address' => 'required|min:10',
+            'address' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'Имя должно быть указано',
-            'name.min' => 'Минимальное количество символов не менее 2',
-            'name.max' => 'Максимальное количество символов 255',
-            'name.regex' => 'Имя не должно содержать численные значения',
+            'contact_name.required' => 'Поле обязательно для заполнения',
+            'contact_name.min' => 'Минимальное количество символов не менее 2',
+            'contact_name.max' => 'Максимальное количество символов 255',
+            'contact_name.regex' => 'Имя не должно содержать численные значения',
 
-            'phone.required' => 'Поле обязательно для заполнения',
-            'phone.numeric' => 'Номер должен состоять из цифр',
-            'phone.min' => 'Минимальное количество символов - 2',
-            'phone.max' => 'Максимальное количество символов - 255',
+            'contact_phone.required' => 'Поле обязательно для заполнения',
+            'contact_phone.digits_between' => 'Номер должен быть от 9 до 30 символов',
 
             'address.required' => 'Поле обязательно для заполнения',
-            'address.min' => 'Минимальное количество символов - 10',
         ];
     }
 }

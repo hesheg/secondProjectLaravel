@@ -5,6 +5,12 @@
         <li><a href="/user-order">Мои заказы</a></li>
     </ul>
 
+    @if(session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h2>Каталог</h2>
     <div class="card-deck" style="display: flex; flex-wrap: wrap; gap: 20px;">
         @foreach($products as $product)
@@ -13,11 +19,10 @@
                     <img class="card-img-top" src="{{ $product->image_url }}" alt="Product image">
                     <div class="card-body">
                         <p class="card-text text-muted">{{ $product->name }}</p>
-                        <div class="card-footer">{{ $product->price }} ₽</div>
+                        <div class="card-footer">{{ $product->price }}₽</div>
 
                         <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                            <form action="{{ route('get-product') }}" method="POST">
-                                @csrf
+                            <form action="{{ route('get-product', ['product' => $product]) }}" method="GET">
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="submit" value="О продукте" class="registerbtn">
                             </form>

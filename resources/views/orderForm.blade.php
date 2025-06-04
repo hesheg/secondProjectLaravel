@@ -40,7 +40,7 @@
             </div>
             <div class="row">
                 <label for="comment"></label><input type="text" name="comment" id="comment">
-                <label for="lineone">comment</label>
+                <label for="lineone">Сomment</label>
                 @error('comment')
                 <div style="color:brown; margin-top: -15px; margin-bottom: 10px;">{{ $message }}</div>
                 @enderror

@@ -11,64 +11,70 @@
 
     <section class="checkout-form">
         <form action="/catalog" method="get">
-            <?php if (empty($userOrders)): ?>
-                <?php echo 'У вас еще нет заказов'; ?>
-            <?php endif; ?>
-            <?php foreach ($userOrders as $userOrder): ?>
-            <div class="form-control">
-                    <?php echo 'Заказ №' . $userOrder->getId(); ?>
-                <label for="checkout-email">Contact Name</label>
-                <div>
-                    <span class="fa fa-envelope"></span>
-                    <label for="checkout-name"></label><input type="text" id="checkout-name" name="checkout-name" value="<?php echo $userOrder->getContactName();?>" placeholder="Enter your name...">
-                </div>
-            </div>
-            <div class="form-control">
-                <label for="checkout-phone">Contact Phone</label>
-                <div>
-                    <span class="fa fa-phone"></span>
-                    <input type="tel" name="checkout-phone" id="checkout-phone" value="<?php echo $userOrder->getContactPhone(); ?>" placeholder="Enter you phone...">
-                </div>
-            </div>
-            <div class="form-control">
-                <label for="checkout-address">Address</label>
-                <div>
-                    <span class="fa fa-home"></span>
-                    <input type="text" name="checkout-address" id="checkout-address" value="<?php echo $userOrder->getAddress(); ?>" placeholder="Your address...">
-                </div>
-            </div>
-            <div class="form-control">
-                <label for="checkout-comment">Comment</label>
-                <div>
-                    <span class="fa fa-building"></span>
-                    <input type="text" name="checkout-comment" value="<?php echo $userOrder->getAddress(); ?>" id="checkout-comment" placeholder="Your comment...">
-                </div>
-            </div>
-            <section class="checkout-details">
-                    <?php foreach ($userOrder->getOrderProducts() as $orderProduct): ?>
-                <div class="checkout-details-inner">
-                    <div class="checkout-lists">
-                        <div class="card">
-                            <div class="card-image"><img src="<?php echo $orderProduct->getProduct()->getImageUrl()?>" alt=""></div>
-                            <div class="card-details">
-                                <div class="card-name"><?php echo $orderProduct->getProduct()->getName(); ?></div>
-                                <div class="card-price"><?php echo '$' . $orderProduct->getProduct()->getPrice(); ?></div>
-                                <div class="card-wheel">
-                                    <span><?php echo 'Количество: ' . $orderProduct->getAmount(); ?></span>
-                                </div>
-                                <div class="card-price"><?php echo '$' . $orderProduct->getSum(); ?></div>
-                            </div>
-                        </div>
+            @if(empty($userOrders))
+                <p>У вас еще нет заказов</p>
+            @endif
+            @foreach($userOrders as $userOrder)
+                <div class="form-control">
+                        <?php echo 'Заказ №' . $userOrder->id; ?>
+                    <label for="checkout-email">Contact Name</label>
+                    <div>
+                        <span class="fa fa-envelope"></span>
+                        <label for="checkout-name"></label><input type="text" id="checkout-name" name="checkout-name"
+                                                                  value="{{ $userOrder->contact_name }}"
+                                                                  placeholder="Enter your name...">
                     </div>
                 </div>
-                <?php endforeach; ?>
-                <div class="checkout-total">
-                    <h6>Общая стоимость заказа</h6>
-                    <p><?php echo '$' . $userOrder->getTotalSum(); ?></p>
+                <div class="form-control">
+                    <label for="checkout-phone">Contact Phone</label>
+                    <div>
+                        <span class="fa fa-phone"></span>
+                        <input type="tel" name="checkout-phone" id="checkout-phone"
+                               value="{{ $userOrder->contact_phone }}" placeholder="Enter you phone...">
+                    </div>
                 </div>
-            </section>
-            <br>
-            <?php endforeach; ?>
+                <div class="form-control">
+                    <label for="checkout-address">Address</label>
+                    <div>
+                        <span class="fa fa-home"></span>
+                        <input type="text" name="checkout-address" id="checkout-address"
+                               value="{{ $userOrder->address }}" placeholder="Your address...">
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label for="checkout-comment">Comment</label>
+                    <div>
+                        <span class="fa fa-building"></span>
+                        <input type="text" name="checkout-comment" value="{{ $userOrder->comment }}"
+                               id="checkout-comment" placeholder="Your comment...">
+                    </div>
+                </div>
+                <section class="checkout-details">
+                    @foreach($userOrder->orderProducts as $orderProduct)
+                        <div class="checkout-details-inner">
+                            <div class="checkout-lists">
+                                <div class="card">
+                                    <div class="card-image"><img src="{{ $orderProduct->product->image_url }}"
+                                                                 alt=""></div>
+                                    <div class="card-details">
+                                        <div class="card-name">{{ $orderProduct->product->name }}</div>
+                                        <div class="card-price">{{ $orderProduct->product->price }}₽ за единицу товара</div>
+                                        <div class="card-wheel">
+                                            <span><p>Количество</p>{{ $orderProduct->amount }}шт </span>
+                                        </div>
+                                                                        <div class="card-price">{{ $orderProduct->amount * $orderProduct->product->price }}₽</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                    <div class="checkout-total">
+                        <h6>Общая стоимость заказа</h6>
+                        {{ $orderSums[$userOrder->id] }}₽
+                    </div>
+                </section>
+                <br>
+            @endforeach
         </form>
     </section>
 
@@ -80,6 +86,7 @@
         margin: 0;
         padding: 0;
     }
+
     body {
         font-family: "Poppins", sans-serif;
         height: 100vh;
@@ -107,7 +114,7 @@
             display: flex;
             column-gap: 100px;
 
-            .checkout-form  {
+            .checkout-form {
                 width: 50%;
 
                 form {
@@ -117,7 +124,7 @@
                         font-weight: 500;
                     }
 
-                    .form-control  {
+                    .form-control {
                         margin: 10px 0px;
                         position: relative;
 
@@ -230,6 +237,7 @@
                                     font-size: 12px;
                                     font-weight: 500;
                                 }
+
                                 .card-price {
                                     font-size: 10px;
                                     font-weight: 500;
@@ -242,6 +250,7 @@
                                         margin-left: 10px;
                                     }
                                 }
+
                                 .card-wheel {
                                     margin-top: 17px;
                                     border: .2px solid #4e515085;

@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderRequest;
+use App\Models\Order;
+use App\Models\OrderProduct;
+use App\Models\UserProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -11,14 +16,55 @@ class OrderController extends Controller
         return view('orderForm');
     }
 
-    public function createOrder()
+    public function createOrder(OrderRequest $request)
     {
+        $userId = Auth::id();
+        $userProductsWithProd = UserProduct::query()->with('product')->where('user_id', $userId)->get();
+        $totalSum = 0;
 
-        return redirect()->route('user-order');
+        $order = Order::query()->create([
+            'contact_name' => $request->contact_name,
+            'contact_phone' => $request->contact_phone,
+            'comment' => $request->comment,
+            'user_id' => $userId,
+            'address' => $request->address
+        ]);
+
+        foreach ($userProductsWithProd as $userProduct) {
+            $itemSum = 0;
+            $itemSum += $userProduct->amount * $userProduct->product->price;
+            OrderProduct::query()->create([
+                'order_id' => $order->id,
+                'product_id' => $userProduct->product->id,
+                'amount' => $userProduct->amount
+            ]);
+
+            $totalSum += $itemSum;
+        }
+
+        UserProduct::query()->where('user_id', $userId)->delete();
+
+        return redirect()->route('catalog')->with('success', 'Ваш заказ успешно оформлен!');
     }
 
     public function getAllOrders()
     {
+        $userId = Auth::id();
+        $userOrders = Order::query()->with('productsWithAmount')->where('user_id', $userId)->get();
+        $orderSums = [];
 
+        foreach ($userOrders as $userOrder) {
+            $orderSum = 0;
+            foreach ($userOrder->productsWithAmount as $orderProduct) {
+                $orderSum += $orderProduct->price * $orderProduct->pivot->amount;
+            }
+
+            $orderSums[$userOrder->id] = $orderSum;
+        }
+
+        return view('userOrder', [
+            'orderSums' => $orderSums,
+            'userOrders' => $userOrders
+        ]);
     }
 }
