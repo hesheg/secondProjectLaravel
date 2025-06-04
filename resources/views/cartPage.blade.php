@@ -21,7 +21,6 @@
             <div class="item-info">
                 <h3 class="item-title">{{ $product->name }}</h3>
                 <p class="price-amount">{{ $product->price }}P</p>
-                    <?php //$res = $userProduct->getProduct(); ?><!----><!---->
 
                 <form class="plus" onsubmit="return false" method="POST">
                     @csrf
@@ -35,7 +34,9 @@
                     </div>
                 </form>
 
-                <p>{{ $product->pivot->amount }}шт</p>
+                <span class="product-quantity" data-product-id="{{ $product->id }}">
+                    {{ $product->pivot->amount }}
+                </span>
 
                 <form class="minus" onsubmit="return false" method="POST">
                     @csrf
@@ -55,38 +56,45 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
 <script>
-    $(document).ready(function () {
-        $('.plus').on('submit', function (event) {
-            event.preventDefault(); // <-- важно
+    $("document").ready(function () {
+        $('.plus').submit(function () {
             $.ajax({
                 type: "POST",
                 url: "/add-product",
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function (response) {
-                    console.log('Добавлено:', response);
-                    // $('.badge').text(response.count); // можно раскомментировать при наличии бейджа
+                    $('.product-quantity[data-product-id="' + response.product_id + '"]').text(response.amount);
                 },
                 error: function(xhr, status, error) {
                     console.error('Ошибка при добавлении товара:', error);
                 }
             });
         });
+    });
+</script>
 
-        $('.minus').on('submit', function (event) {
-            event.preventDefault(); // <-- важно
+<script>
+    $("document").ready(function () {
+        $('.minus').submit(function () {
             $.ajax({
                 type: "POST",
                 url: "/decrease-product",
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function (response) {
-                    console.log('Удалено:', response);
-                    // $('.badge').text(response.count);
+                    const $quantity = $('.product-quantity[data-product-id="' + response.product_id + '"]').text(response.amount);
+
+                    if (response.amount === 0) {
+                        $quantity.closest('.cart-item').remove();
+                    } else {
+                        $quantity.text(response.amount);
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Ошибка при удалении товара:', error);
+                    console.error('Ошибка при добавлении товара:', error);
                 }
             });
         });

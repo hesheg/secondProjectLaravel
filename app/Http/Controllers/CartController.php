@@ -41,13 +41,17 @@ class CartController extends Controller
             $userProduct->amount += $amount;
             $userProduct->save();
         } else {
-            UserProduct::create([
+            $userProduct = UserProduct::create([
                 'user_id' => $userId,
                 'product_id' => $productId,
                 'amount' => $amount
             ]);
         }
-        return redirect($_SERVER['HTTP_REFERER']);
+
+            return response()->json([
+                'amount' => $userProduct->amount,
+                'product_id' => $productId
+            ]);
     }
 
     public function decreaseProduct(DecreaseProductRequest $request)
@@ -64,6 +68,11 @@ class CartController extends Controller
         if ($userProduct) {
             if ($userProduct->amount === 1) {
                 $userProduct->delete();
+
+                return response()->json([
+                    'amount' => 0,
+                    'product_id' => $productId
+                ]);
             } else {
                 $userProduct->amount -= $amount;
                 $userProduct->save();
@@ -72,6 +81,9 @@ class CartController extends Controller
             return response()->json(['message' => 'Товар не найден в корзине'], 404);
         }
 
-        return redirect($_SERVER['HTTP_REFERER']);
+        return response()->json([
+            'amount' => $userProduct->amount,
+            'product_id' => $productId
+        ]);
     }
 }

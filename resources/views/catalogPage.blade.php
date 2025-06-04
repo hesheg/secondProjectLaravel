@@ -33,7 +33,9 @@
                                 <input type="hidden" name="amount" value="1">
                                 <button type="submit" class="registerbtn">+</button>
                             </form>
-
+                            <span class="product-quantity" data-product-id="{{ $product->id }}">
+                                {{ $product->amount }}
+                            </span>
                             <form class="minus" onsubmit="return false" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -58,8 +60,7 @@
                         data: $(this).serialize(),
                         dataType: 'json',
                         success: function (response) {
-                            // Обновляем количество товаров в бейдже корзины
-                            // $('.badge').text(response.count);
+                            $('.product-quantity[data-product-id="' + response.product_id + '"]').text(response.amount);
                         },
                         error: function(xhr, status, error) {
                             console.error('Ошибка при добавлении товара:', error);
@@ -78,8 +79,7 @@
                         data: $(this).serialize(),
                         dataType: 'json',
                         success: function (response) {
-                            // Обновляем количество товаров в бейдже корзины
-                            // $('.badge').text(response.count);
+                            $('.product-quantity[data-product-id="' + response.product_id + '"]').text(response.amount);
                         },
                         error: function(xhr, status, error) {
                             console.error('Ошибка при добавлении товара:', error);
