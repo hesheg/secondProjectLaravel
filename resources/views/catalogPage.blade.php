@@ -15,7 +15,6 @@
     <div class="card-deck" style="display: flex; flex-wrap: wrap; gap: 20px;">
         @foreach($products as $product)
             <div class="card text-center">
-                <a href="#">
                     <img class="card-img-top" src="{{ $product->image_url }}" alt="Product image">
                     <div class="card-body">
                         <p class="card-text text-muted">{{ $product->name }}</p>
@@ -44,7 +43,6 @@
                             </form>
                         </div>
                     </div>
-                </a>
             </div>
         @endforeach
     </div>

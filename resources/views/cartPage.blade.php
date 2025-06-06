@@ -20,7 +20,7 @@
             </div>
             <div class="item-info">
                 <h3 class="item-title">{{ $product->name }}</h3>
-                <p class="price-amount">{{ $product->price }}P</p>
+                <p class="price-amount">{{ $product->price }}₽</p>
 
                 <form class="plus" onsubmit="return false" method="POST">
                     @csrf
