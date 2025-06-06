@@ -18,7 +18,9 @@ class OrderController extends Controller
     public function createOrder(OrderRequest $request)
     {
         $this->orderService->create($request);
-        return redirect()->route('catalog')->with('success', 'Ваш заказ успешно оформлен!');
+
+        return redirect()->route('catalog')
+            ->with('success', 'Ваш заказ успешно оформлен!');
     }
 
     public function getAllOrders()

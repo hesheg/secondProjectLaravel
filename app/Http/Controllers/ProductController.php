@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
-use function Symfony\Component\Translation\t;
 
 class ProductController extends Controller
 {
@@ -27,7 +26,6 @@ class ProductController extends Controller
                 $product->amount = 0;
             }
         }
-//        dd($products);
 
         return view('catalogPage', ['products' => $products]);
     }
@@ -50,7 +48,8 @@ class ProductController extends Controller
         }
 
         $result = false;
-        $userOrders = Order::query()->with('orderProducts')->where('user_id', Auth::id())->get();
+        $userOrders = Order::query()->with('orderProducts')
+            ->where('user_id', Auth::id())->get();
 
         foreach ($userOrders as $userOrder) {
             foreach ($userOrder->orderProducts as $orderProduct) {

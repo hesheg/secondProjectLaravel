@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
@@ -14,29 +15,35 @@ class OrderService
     {
         $userId = Auth::id();
         $userProductsWithProd = UserProduct::query()->with('product')->where('user_id', $userId)->get();
-        $totalSum = 0;
 
-        $order = Order::query()->create([
-            'contact_name' => $request->contact_name,
-            'contact_phone' => $request->contact_phone,
-            'comment' => $request->comment,
-            'user_id' => $userId,
-            'address' => $request->address
-        ]);
-
-        foreach ($userProductsWithProd as $userProduct) {
-            $itemSum = 0;
-//            $itemSum += $userProduct->amount * $userProduct->product->price;
-            OrderProduct::query()->create([
-                'order_id' => $order->id,
-                'product_id' => $userProduct->product->id,
-                'amount' => $userProduct->amount
+        DB::beginTransaction();
+        try {
+            $order = Order::query()->create([
+                'contact_name' => $request->contact_name,
+                'contact_phone' => $request->contact_phone,
+                'comment' => $request->comment,
+                'user_id' => $userId,
+                'address' => $request->address
             ]);
 
-//            $totalSum += $itemSum;
-        }
+//            throw new \Exception('test');
 
-        UserProduct::query()->where('user_id', $userId)->delete();
+            foreach ($userProductsWithProd as $userProduct) {
+                OrderProduct::query()->create([
+                    'order_id' => $order->id,
+                    'product_id' => $userProduct->product->id,
+                    'amount' => $userProduct->amount
+                ]);
+            }
+
+            UserProduct::query()->where('user_id', $userId)->delete();
+
+            DB::commit();
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+
+            throw $exception;
+        }
     }
 
 
