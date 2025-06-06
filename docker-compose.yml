@@ -1,30 +1,42 @@
 services:
 
-  web:
-    image: nginx
-    restart: unless-stopped
-    ports:
-      - 8181:80
-    volumes:
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
-      - .:/var/www/html
-    depends_on:
-      - php-fpm
-      - db
+    web:
+        image: nginx
+        restart: unless-stopped
+        ports:
+            - 8181:80
+        volumes:
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+            - .:/var/www/html
+        depends_on:
+            - php-fpm
+            - db
 
-  php-fpm:
-    build: .
-    restart: unless-stopped
-    volumes:
-      - .:/var/www/html
-      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-xdebug.ini
+    php-fpm:
+        build: .
+        restart: unless-stopped
+        volumes:
+            - .:/var/www/html
+            - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-xdebug.ini
 
-  db:
-    image: postgres:14.1
-    restart: unless-stopped
-    ports:
-      - 54323:5432
-    environment:
-      - POSTGRES_DB=${DB_DATABASE}
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    db:
+        image: postgres:14.1
+        restart: unless-stopped
+        ports:
+            - 54323:5432
+        environment:
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+    rabbitmq:
+        image: rabbitmq:4.1.1-management-alpine
+        restart: unless-stopped
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=user
+            - RABBITMQ_DEFAULT_PASS=pass
+        volumes:
+            - ./docker/rabbitmq:/var/lib/rabbitmq
