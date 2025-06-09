@@ -8,12 +8,17 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
     public function getCatalog()
     {
         $products = Product::all();
+//        $products = Cache::remember('products_all', 3600, function () {
+//            return Product::all();
+//        });
+
         foreach ($products as $product) {
             $userProduct = UserProduct::query()
                 ->where('user_id', Auth::id())

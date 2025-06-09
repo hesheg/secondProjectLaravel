@@ -5,13 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EditProfileRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrateRequest;
+use App\Http\Services\RabbitmqService;
+use App\Jobs\SendUserNotification;
+use App\Mail\TestMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class UserController
 {
+    private RabbitmqService $rabbitmqService;
+    public function __construct(RabbitmqService $rabbitmqService)
+    {
+        $this->rabbitmqService = $rabbitmqService;
+    }
     public function getRegistrateForm()
     {
         return view('registrateForm');
@@ -24,6 +35,8 @@ class UserController
             'email' => $request['email'],
             'password' => Hash::make($request['password'])
         ]);
+
+        SendUserNotification::dispatch($user);
 
         return redirect(route('login'));
     }

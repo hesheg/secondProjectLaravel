@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
-use App\Http\Service\OrderService;
+use App\Http\Services\OrderService;
 
 class OrderController extends Controller
 {
