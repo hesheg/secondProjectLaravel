@@ -37,4 +37,3 @@ Route::middleware('auth')->group(function () {
     Route::post('/review-add', [\App\Http\Controllers\ProductController::class, 'addReview'])->name('review-add');
 });
 
-

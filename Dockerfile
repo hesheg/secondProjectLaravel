@@ -1,6 +1,7 @@
 FROM php:8.3-fpm
 
 RUN apt-get update && apt-get install -y \
+        libssl-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
@@ -10,7 +11,9 @@ RUN apt-get update && apt-get install -y \
         libxpm-dev \
         libvpx-dev \
         libzip-dev \
+    && pecl install redis \
     && pecl install xdebug \
+    && docker-php-ext-enable redis \
     && docker-php-ext-enable xdebug \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install -j$(nproc) intl \

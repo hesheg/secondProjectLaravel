@@ -3,11 +3,14 @@
 namespace App\Http\Services;
 
 use App\Http\Requests\OrderRequest;
+use App\Jobs\SendHttpRequest;
+use App\Jobs\SendUserNotification;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class OrderService
 {
@@ -38,6 +41,8 @@ class OrderService
 
             UserProduct::query()->where('user_id', $userId)->delete();
 
+            SendHttpRequest::dispatch($order->id);
+
             DB::commit();
         } catch (\Throwable $exception) {
             DB::rollBack();
@@ -50,7 +55,10 @@ class OrderService
     public function getAll()
     {
         $userId = Auth::id();
-        $userOrders = Order::query()->with('productsWithAmount')->where('user_id', $userId)->get();
+        $userOrders = Order::query()->with('productsWithAmount')
+            ->where('user_id', $userId)
+            ->orderByDesc('created_at')
+            ->get();
         $orderSums = [];
 
         foreach ($userOrders as $userOrder) {

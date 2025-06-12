@@ -7,14 +7,11 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrateRequest;
 use App\Http\Services\RabbitmqService;
 use App\Jobs\SendUserNotification;
-use App\Mail\TestMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
 class UserController
 {
@@ -63,9 +60,38 @@ class UserController
 
     public function getProfile()
     {
-        $user = Auth::user();
+        $user = Cache::remember('get_profile', 3600, function () {
+            return Auth::user();
+        });
 
         return view('profilePage', ['user' => $user]);
+    }
+
+    public function store(Request $request)
+    {
+        User::create($request->all());
+        Cache::forget('get_profile');
+
+        return redirect()->route('profile')
+            ->with('success', 'Кеш сброшен');
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $user->update($request->all());
+        Cache::forget('get_profile');
+
+        return redirect()->route('profile')
+            ->with('success', 'Кеш сброшен');
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+        Cache::forget('get_profile');
+
+        return redirect()->route('catalog')
+            ->with('success', 'Кеш сброшен');
     }
 
     public function getEditProfileForm()
