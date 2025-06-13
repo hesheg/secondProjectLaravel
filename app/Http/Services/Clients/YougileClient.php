@@ -16,6 +16,7 @@ class YougileClient
         $this->apiKey = config('services.yougile.api_key');
         $this->baseUrl = config('services.yougile.base_url');
     }
+
     public function createTask(YougileTaskDTO $taskDTO): string
     {
         $response = Http::withHeaders([
@@ -35,13 +36,17 @@ class YougileClient
     {
         $taskId = Order::query()->where('id', $order->id)->value('yougile_task_id');
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'Content-Type' => 'application/json'
-        ])->post($this->baseUrl . "/tasks/{$taskId}");
+        if ($taskId) {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json'
+            ])->post($this->baseUrl . "/tasks/{$taskId}");
 
-        if (!$response->successful()) {
-            throw new \Exception("Ошибка удаления задачи");
+            if (!$response->successful()) {
+                throw new \Exception("Ошибка удаления задачи");
+            }
+        } else {
+            throw new \Exception("Поле taskId у заказа №{$order->id} пустое");
         }
 
         return true;

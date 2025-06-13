@@ -4,13 +4,11 @@ namespace App\Http\Services;
 
 use App\Http\Requests\OrderRequest;
 use App\Jobs\SendHttpRequest;
-use App\Jobs\SendUserNotification;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\UserProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class OrderService
 {
