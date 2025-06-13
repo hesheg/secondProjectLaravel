@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'yougile' => [
+        'api_key' => env('YOUGILE_API_KEY'),
+        'base_url' => env('YOUGILE_BASE_URL'),
+    ],
 ];

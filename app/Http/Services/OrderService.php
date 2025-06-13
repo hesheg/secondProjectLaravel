@@ -55,7 +55,7 @@ class OrderService
     public function getAll()
     {
         $userId = Auth::id();
-        $userOrders = Order::query()->with('productsWithAmount')
+        $userOrders = Order::query()->with('products')
             ->where('user_id', $userId)
             ->orderByDesc('created_at')
             ->get();
@@ -63,7 +63,7 @@ class OrderService
 
         foreach ($userOrders as $userOrder) {
             $orderSum = 0;
-            foreach ($userOrder->productsWithAmount as $orderProduct) {
+            foreach ($userOrder->products as $orderProduct) {
                 $orderSum += $orderProduct->price * $orderProduct->pivot->amount;
             }
 
