@@ -22,3 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 /docker/rabbitmq/.erlang.cookie
+/docker/rabbitmq/mnesia/
